@@ -7,6 +7,8 @@ services:
               --tableHost 0.0.0.0
               --location /data
               --skipApiVersionCheck
+    environment:
+      AZURITE_ACCOUNTS: "devstoreaccount1:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
     volumes:
       - azurite-data:/data
 
@@ -18,9 +20,12 @@ services:
       FUNCTIONS_WORKER_RUNTIME: powershell
       FUNCTIONS_WORKER_RUNTIME_VERSION: "7.4"
       FUNCTIONS_EXTENSION_VERSION: "~4"
-      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNoBnZf6KgBVU4=;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+      AzureFunctionsJobHost__Logging__Console__IsEnabled: "true"
       NonLocalHostAzurite: "true"
       WEBSITE_HOSTNAME: cippapi
+
+      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+
       ApplicationID: ${ApplicationID}
       ApplicationSecret: ${ApplicationSecret}
       RefreshToken: ${RefreshToken}
