@@ -12,40 +12,28 @@ services:
 
   cippapi:
     build:
-      context: ./CIPP-API
+      context: .
       dockerfile: Dockerfile
     environment:
       FUNCTIONS_WORKER_RUNTIME: powershell
       FUNCTIONS_WORKER_RUNTIME_VERSION: "7.4"
       FUNCTIONS_EXTENSION_VERSION: "~4"
-      AzureWebJobsStorage: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM...;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
-      WEBSITES_HOSTNAME: cippapi
-      WEBSITE_HOSTNAME: cippapi
-      AzureWebJobsFeatureFlags: EnableWorkerIndexing
+      AzureWebJobsStorage: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNoBnZf6KgBVU4=;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
       NonLocalHostAzurite: "true"
-
+      WEBSITE_HOSTNAME: cippapi
       ApplicationID: ${ApplicationID}
       ApplicationSecret: ${ApplicationSecret}
       RefreshToken: ${RefreshToken}
       TenantID: ${TenantID}
-
     depends_on:
       - azurite
 
-  frontend:
-    build:
-      context: ./CIPP
-      dockerfile: Dockerfile
-    depends_on:
-      - cippapi
-
-  nginx:
+  cippapi-nginx:
     image: nginx:alpine
-    depends_on:
-      - frontend
-      - cippapi
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - cippapi
     expose:
       - "80"
     labels:
@@ -53,3 +41,4 @@ services:
 
 volumes:
   azurite-data:
+``
