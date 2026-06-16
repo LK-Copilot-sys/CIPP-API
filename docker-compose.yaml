@@ -1,38 +1,18 @@
 services:
-  azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
-    command: >
-      azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0
-              --location /data --skipApiVersionCheck
-    volumes:
-      - azurite-data:/data
-
-  cippapi:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      FUNCTIONS_WORKER_RUNTIME: powershell
-      FUNCTIONS_WORKER_RUNTIME_VERSION: "7.4"
-      FUNCTIONS_EXTENSION_VERSION: "~4"
-      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNoBnZf6KgBVU4=;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
-      WEBSITE_HOSTNAME: cippapi
-      NonLocalHostAzurite: "true"
-      ApplicationID: ${ApplicationID}
-      ApplicationSecret: ${ApplicationSecret}
-      RefreshToken: ${RefreshToken}
-      TenantID: ${TenantID}
-    depends_on: [azurite]
+    expose:
+      - "3000"
 
-  cippapi-nginx:
-    image: nginx:alpine
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on: [cippapi]
-    expose: ["80"]
-    # Coolify reads this label to expose via Traefik with HTTPS
+  web-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
+    depends_on:
+      - web
+    expose:
+      - "80"
     labels:
       - coolify.managed=true
-
-volumes:
-  azurite-data:
